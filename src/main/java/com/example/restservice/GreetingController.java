@@ -30,19 +30,15 @@ public class GreetingController {
 	}
 
 	@GetMapping("/greeting2")
-        public String greeting2(@RequestParam(value = "name", defaultValue = "World") String name) {
-                return doThis();
-        }
+        public Quote greeting2(@RequestParam(value = "housePrc", defaultValue = "100000000") String housePrc) {
 
-	private String doThis() {
-
-		String res = "BLANK";
+		log.info("housePrc = " + housePrc);
 
 		final String reqUrl = UriComponentsBuilder.fromUriString(API_URL)
 					.queryParam("serviceKey", API_KEY)
 					.queryParam("pageNo", "1")
 					.queryParam("numOfRows", "10")
-					.queryParam("housePrc", "100000000")
+					.queryParam("housePrc", housePrc)
 					.queryParam("houseDvcd", "01")
 					.queryParam("pnsnPayMthdDvcd", "01")
 					.queryParam("mmPayAmtIndcDvcd", "01")
@@ -57,17 +53,18 @@ public class GreetingController {
 		log.info("reqUrl = " + reqUrl);	
 
 		RestTemplate restTemplate = new RestTemplate();
+		Quote quote = null;
 
 		try {
-			ResponseEntity<String> re = restTemplate.getForEntity(new URI(reqUrl), String.class);
-			res = re.getBody();
-
-			log.info("res = " + res);
+			ResponseEntity<Quote> re = restTemplate.getForEntity(new URI(reqUrl), Quote.class);
+			quote = re.getBody();
+			
+			log.info("quote = " + quote);
 
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
 
-		return res;
+		return quote;
 	}
 }

@@ -1,3 +1,6 @@
-com/example/restservice/RestServiceApplication.class
+com/example/restservice/Quote.class
 com/example/restservice/Greeting.class
+com/example/restservice/RestServiceApplication.class
+com/example/restservice/Item.class
+com/example/restservice/Body.class
 com/example/restservice/GreetingController.class
