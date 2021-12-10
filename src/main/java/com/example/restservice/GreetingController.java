@@ -1,7 +1,12 @@
 package com.example.restservice;
 
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.GregorianCalendar;
+import java.util.Calendar;
+import java.util.Locale;
+import java.util.Date;
 import java.net.URI;
+import java.text.SimpleDateFormat;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,9 +36,21 @@ public class GreetingController {
 	}
 
 	@GetMapping("/greeting2")
-        public JsonNode greeting2(@RequestParam(value = "housePrc", defaultValue = "100000000") String housePrc) {
+        public JsonNode greeting2(
+			@RequestParam(value = "housePrc", defaultValue = "100000000") String housePrc,
+			@RequestParam(value = "age", defaultValue = "60") int age 
+			) {
 
 		log.info("housePrc = " + housePrc);
+		log.info("age = " + age);
+
+		Calendar cal = new GregorianCalendar(Locale.KOREA);
+		cal.setTime(new Date());
+		cal.add(Calendar.YEAR, -age);
+
+		SimpleDateFormat fm = new SimpleDateFormat("yyyyMMdd");
+		String brthDy = fm.format(cal.getTime());
+		log.info("brthDy = " + brthDy);	
 
 		final String reqUrl = UriComponentsBuilder.fromUriString(API_URL)
 					.queryParam("serviceKey", API_KEY)
@@ -43,8 +60,8 @@ public class GreetingController {
 					.queryParam("houseDvcd", "01")
 					.queryParam("pnsnPayMthdDvcd", "01")
 					.queryParam("mmPayAmtIndcDvcd", "01")
-					.queryParam("joinPersBrthDy", "19511201")
-					.queryParam("sposBrthDy", "19511201")
+					.queryParam("joinPersBrthDy", brthDy)
+					.queryParam("sposBrthDy", brthDy)
 					.queryParam("payTermCd", "01")
 					.queryParam("wdrwLmtSetpAmt", "0")
 					.queryParam("dataType", "JSON")
