@@ -2,7 +2,7 @@ package com.example.restservice;
 
 import java.util.concurrent.atomic.AtomicLong;
 import java.net.URI;
-
+import com.fasterxml.jackson.databind.JsonNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.web.client.RestTemplate;
 
 @RestController
@@ -30,7 +31,7 @@ public class GreetingController {
 	}
 
 	@GetMapping("/greeting2")
-        public Quote greeting2(@RequestParam(value = "housePrc", defaultValue = "100000000") String housePrc) {
+        public JsonNode greeting2(@RequestParam(value = "housePrc", defaultValue = "100000000") String housePrc) {
 
 		log.info("housePrc = " + housePrc);
 
@@ -53,18 +54,24 @@ public class GreetingController {
 		log.info("reqUrl = " + reqUrl);	
 
 		RestTemplate restTemplate = new RestTemplate();
-		Quote quote = null;
+		JsonNode jsonNode = null;
 
 		try {
-			ResponseEntity<Quote> re = restTemplate.getForEntity(new URI(reqUrl), Quote.class);
-			quote = re.getBody();
-			
-			log.info("quote = " + quote);
+			ResponseEntity<JsonNode> re = restTemplate.getForEntity(new URI(reqUrl), JsonNode.class);
+
+			HttpHeaders headers = re.getHeaders();
+			log.info("headers = " + headers);
+
+			jsonNode = re.getBody();
+			log.info("jsonNode = " + jsonNode);
+
+			JsonNode jn1 = jsonNode.at("/header");
+			log.info("jn1 = " + jn1);
 
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
 
-		return quote;
+		return jsonNode;
 	}
 }
